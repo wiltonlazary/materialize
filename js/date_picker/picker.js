@@ -1,5 +1,5 @@
 /*!
- * pickadate.js v3.5.4, 2014/09/11
+ * pickadate.js v3.5.0, 2014/04/13
  * By Amsul, http://amsul.ca
  * Hosted on http://amsul.github.io/pickadate.js
  * Licensed under MIT
@@ -117,7 +117,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
                 // Insert the root as specified in the settings.
                 if ( SETTINGS.container ) $( SETTINGS.container ).append( P.$root )
-                else $ELEMENT.after( P.$root )
+                else $ELEMENT.before( P.$root )
 
 
                 // Bind the default component and settings events.
@@ -246,7 +246,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
                     // Pass focus to the root element’s jQuery object.
                     // * Workaround for iOS8 to bring the picker’s root into view.
-                    P.$root[0].focus()
+                    P.$root.eq(0).focus()
 
                     // Bind the document events.
                     $document.on( 'click.' + STATE.id + ' focusin.' + STATE.id, function( event ) {
@@ -299,7 +299,10 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
                             // On “enter”, if the highlighted item isn’t disabled, set the value and close.
                             else if ( !P.$root.find( '.' + CLASSES.highlighted ).hasClass( CLASSES.disabled ) ) {
-                                P.set( 'select', P.component.item.highlight ).close()
+                                P.set( 'select', P.component.item.highlight )
+                                if ( SETTINGS.closeOnSelect ) {
+                                    P.close( true )
+                                }
                             }
                         }
 
@@ -328,7 +331,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                     // ....ah yes! It would’ve been incomplete without a crazy workaround for IE :|
                     // The focus is triggered *after* the close has completed - causing it
                     // to open again. So unbind and rebind the event at the next tick.
-                    P.$root.off( 'focus.toOpen' )[0].focus()
+                    P.$root.off( 'focus.toOpen' ).eq(0).focus()
                     setTimeout( function() {
                         P.$root.on( 'focus.toOpen', handleFocusToOpenEvent )
                     }, 0 )
@@ -444,7 +447,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                     if ( P._hidden ) {
                         return P._hidden.value
                     }
-                    thing = value
+                    thing = 'value'
                 }
 
                 // Return the value, if that.
@@ -614,7 +617,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                 // On focus/click, focus onto the root to open it up.
                 on( 'focus.' + STATE.id + ' click.' + STATE.id, function( event ) {
                     event.preventDefault()
-                    P.$root[0].focus()
+                    P.$root.eq(0).focus()
                 }).
 
                 // Handle keyboard event based on the picker being opened or not.
@@ -627,7 +630,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
             haspopup: true,
             expanded: false,
             readonly: false,
-            owns: ELEMENT.id + '_root' + (P._hidden ? ' ' + P._hidden.id : '')
+            owns: ELEMENT.id + '_root'
         })
     }
 
@@ -666,13 +669,13 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                         //   prevent cases where focus is shifted onto external elements
                         //   when using things like jQuery mobile or MagnificPopup (ref: #249 & #120).
                         //   Also, for Firefox, don’t prevent action on the `option` element.
-                        if ( event.type == 'mousedown' && !$( target ).is( ':input' ) && target.nodeName != 'OPTION' ) {
+                        if ( event.type == 'mousedown' && !$( target ).is( 'input, select, textarea, button, option' )) {
 
                             event.preventDefault()
 
                             // Re-focus onto the root so that users can click away
                             // from elements focused within the picker.
-                            P.$root[0].focus()
+                            P.$root.eq(0).focus()
                         }
                     }
                 }
@@ -705,7 +708,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
                 // If it’s disabled or nothing inside is actively focused, re-focus the element.
                 if ( targetDisabled || activeElement && !$.contains( P.$root[0], activeElement ) ) {
-                    P.$root[0].focus()
+                    P.$root.eq(0).focus()
                 }
 
                 // If something is superficially changed, update the `highlight` based on the `nav`.
@@ -715,12 +718,18 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
                 // If something is picked, set `select` then close with focus.
                 else if ( !targetDisabled && 'pick' in targetData ) {
-                    P.set( 'select', targetData.pick ).close( true )
+                    P.set( 'select', targetData.pick )
+                    if ( SETTINGS.closeOnSelect ) {
+                        P.close( true )
+                    }
                 }
 
                 // If a “clear” button is pressed, empty the values and close with focus.
                 else if ( targetData.clear ) {
-                    P.clear().close( true )
+                    P.clear()
+                    if ( SETTINGS.closeOnSelect ) {
+                        P.close( true )
+                    }
                 }
 
                 else if ( targetData.close ) {
@@ -775,10 +784,12 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                 P._hidden.value = ELEMENT.value ?
                     P.get('select', SETTINGS.formatSubmit) :
                     ''
-            }).
+            })
 
-            // Insert the hidden input after the element.
-            after(P._hidden)
+
+        // Insert the hidden input as specified in the settings.
+        if ( SETTINGS.container ) $( SETTINGS.container ).append( P._hidden )
+        else $ELEMENT.before( P._hidden )
     }
 
 
@@ -1117,6 +1128,3 @@ return PickerConstructor
 
 
 }));
-
-
-

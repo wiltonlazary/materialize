@@ -2,7 +2,7 @@
    $BASE-PICKER
    ========================================================================== */
 /**
- * Note: the root picker element should *NOT* be styled more than what’s here.
+ * Note: the root picker element should *NOT* be styled more than what's here.
  */
 .picker {
   font-size: 16px;
@@ -15,6 +15,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  outline: none;
 }
 /**
  * The picker input element.
@@ -23,13 +24,13 @@
   cursor: default;
 }
 /**
- * When the picker is opened, the input element is “activated”.
+ * When the picker is opened, the input element is "activated".
  */
 .picker__input.picker__input--active {
   border-color: #0089ec;
 }
 /**
- * The holder is the only “scrollable” top-level container element.
+ * The holder is the only "scrollable" top-level container element.
  */
 .picker__holder {
   width: 100%;
@@ -42,7 +43,7 @@
  * Demo: http://amsul.github.io/pickadate.js
  */
 /**
- * Note: the root picker element should *NOT* be styled more than what’s here.
+ * Note: the root picker element should *NOT* be styled more than what's here.
  */
 /**
  * Make the holder and frame fullscreen.
@@ -71,11 +72,11 @@
   position: absolute;
   margin: 0 auto;
   min-width: 256px;
-  
+
 //  picker width
-  max-width: 300px;
+  width: 300px;
   max-height: 350px;
-  
+
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
   -moz-opacity: 0;
@@ -126,10 +127,10 @@
 @media (min-height: 28.875em) {
   .picker__box {
     display: block;
-    
+
 //    picker header font-size
 //    font-size: 1rem;
-    
+
     border: 1px solid #777777;
     border-top-color: #898989;
     border-bottom-width: 0;
@@ -173,7 +174,7 @@
 @media (min-height: 35.875em) {
   .picker--opened .picker__frame {
     top: 10%;
-    bottom: 20%auto;
+    bottom: auto;
   }
 }
 /**
@@ -198,4 +199,14 @@
     top: 10%;
     bottom: auto;
   }
+}
+
+@media only screen and (min-width: 601px) {
+	.picker__box {
+		display:flex;
+	}
+	.picker__frame {
+		width: 80%;
+		max-width:600px;
+	}
 }

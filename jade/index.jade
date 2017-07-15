@@ -1,10 +1,12 @@
-- var white_nav = true
+- var no_nav = true
 
-html
+doctype html
+html(lang="en")
   head
     include _head.jade
   body
     include _navbar.jade
-    include index/index_content.html
+    main
+      include index/index_content.html
     include _footer.html
     include _scripts.html
